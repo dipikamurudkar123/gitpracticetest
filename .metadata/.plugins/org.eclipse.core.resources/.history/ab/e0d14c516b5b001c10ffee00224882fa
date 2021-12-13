@@ -1,0 +1,186 @@
+package com.avalara.drivers;
+
+import com.avalara.drivers.capabilities.CapabilitiesFactory;
+import com.avalara.utils.common.Utils;
+import com.avalara.utils.settings.EnvironmentSettings;
+import com.avalara.utils.settings.SuiteParameters;
+import com.browserstack.local.Local;
+import javafx.util.Pair;
+import org.apache.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeDriverService;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.GeckoDriverService;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerDriverService;
+import org.openqa.selenium.ie.InternetExplorerOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.SessionId;
+import org.openqa.selenium.safari.SafariDriver;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+public class DriverClass {
+
+    public WebDriver driver;
+    private static Logger log = null;
+    static String workingdirectory = System.getProperty("user.dir");
+    public static HashMap<Long, Local> bslocalDetails = new HashMap<>();
+    public static HashMap<Long, Pair<WebDriver, SessionId>> webDriverDetails = new HashMap<>();
+
+    private final static String WindowsDriverPath = workingdirectory + "/src/test/resources/drivers/WindowsDriver";
+    private final static String MacDriverPath = workingdirectory + "/src/test/resources/drivers/MacDrivers";
+    private final static String nodeURL = "http://44.231.173.164:4444/wd/hub";
+
+
+    public void initLogger() {
+        log = Logger.getLogger("DriverClass");
+    }
+
+    public synchronized void intialize() throws Exception {
+        try {
+
+            initLogger();
+            String OSName = System.getProperty("os.name");
+            DesiredCapabilities capabilities;
+            capabilities = CapabilitiesFactory.getCapablities();
+            setupLocal(capabilities);
+
+            if (SuiteParameters.getUseIeServerDriver()) {
+                log.debug("Configured to use IE Driver Server directly. Creating instance.");
+                System.setProperty("webdriver.ie.driver", WindowsDriverPath + "/IEDriverServer.exe");
+                capabilities.setCapability("browserstack.ie.enablePopups", "true");
+                InternetExplorerOptions ieOpts = new InternetExplorerOptions(capabilities);
+                driver = new InternetExplorerDriver(InternetExplorerDriverService.createDefaultService(), ieOpts);
+
+            } else if (SuiteParameters.getUseChromeServerDriver()) {
+                log.debug("Configured to use Chrome Driver Server directly. Creating instance.");
+                if (OSName.contains("Mac")) {
+                    log.info(MacDriverPath);
+                    System.setProperty("webdriver.chrome.driver", MacDriverPath + "/chromedriver");
+                } else {
+                    log.info(WindowsDriverPath);
+                    System.setProperty("webdriver.chrome.driver", WindowsDriverPath + "/chromedriver.exe");
+                }
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--disable-notifications");
+                options.addArguments("--disable-web-security");
+                if (SuiteParameters.getUseRemoteWebDriver()){
+                    driver = new RemoteWebDriver(new URL(nodeURL), options.merge(capabilities));
+                }else {
+                    driver = new ChromeDriver(ChromeDriverService.createDefaultService(), options.merge(capabilities));
+                }
+                driver.manage().window().maximize();
+
+
+            }
+
+            else if (SuiteParameters.getUseFirefoxServerDriver()) {
+                log.debug("Configured to use Firefox Driver Server directly. Creating instance.");
+                if (OSName.contains("Mac")) {
+                    log.info(MacDriverPath);
+                    System.setProperty("webdriver.gecko.driver", MacDriverPath + "/geckodriver");
+                } else {
+                    log.info(WindowsDriverPath);
+                    System.setProperty("webdriver.gecko.driver", WindowsDriverPath + "/geckodriver.exe");
+                }
+                FirefoxOptions options=new FirefoxOptions();
+                options.addArguments("--disable-notifications");
+                options.addArguments("--disable-web-security");
+                if (SuiteParameters.getUseRemoteWebDriver()){
+                    driver = new RemoteWebDriver(new URL(nodeURL), options.merge(capabilities));
+                }else {
+                    driver = new FirefoxDriver(GeckoDriverService.createDefaultService(),options.merge(capabilities));
+                }
+                driver.manage().window().maximize();
+            }
+
+            // If we're using IE directly on Windows, these are the hoops.
+            // https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver
+            else if (SuiteParameters.getUseEdgeServerDriver()) {
+                log.debug("Configured to use IE Driver Server directly. Creating instance.");
+                System.setProperty("webdriver.edge.driver", WindowsDriverPath + "/EdgeDriver.exe");
+                EdgeOptions edgeOpts = new EdgeOptions();
+                driver = new EdgeDriver(EdgeDriverService.createDefaultService(), edgeOpts.merge(capabilities));
+            } else if (SuiteParameters.getUseSafariServerDriver()) {
+                driver = new SafariDriver();
+                driver.manage().window().maximize();
+            } else { // Setup the BrowserStack remote driver.
+                log.debug("Configured to use BrowserStack Remote Web Driver. Creating instance.");
+
+                try {
+                    driver = new RemoteWebDriver(getDriverUrl(), capabilities);
+                } catch (Exception e) {
+                    throw new Exception(e);
+                }
+            }
+            Pair driverSessionDetails = new Pair(driver, ((RemoteWebDriver) driver).getSessionId());
+            webDriverDetails.put((Thread.currentThread().getId()), driverSessionDetails);
+            driver.manage().timeouts().implicitlyWait(SuiteParameters.getImplicitWait(), TimeUnit.SECONDS);
+
+        } catch (Exception e) {
+            log.info("Class DriverClass | Method intialize | Exception desc : " + e.getMessage());
+        }
+    }
+
+    private URL getDriverUrl() throws MalformedURLException {
+        URL u = null;
+
+        // Build the driver URL by pulling in config values.
+        String url = "http://" + EnvironmentSettings.getBrowserstackUsername()
+                + ":" + EnvironmentSettings.getBrowserstackPassword() + "@"
+                + EnvironmentSettings.getBrowserstackHost() + "/wd/hub";
+
+        try {
+            u = new URL(url);
+        } catch (MalformedURLException malfUrl) {
+            log.debug("Failed to generate valid URL. Tried with: " + url + ". Check your BrowserStack configuration settings.");
+            throw malfUrl;
+        }
+
+        return u;
+    }
+
+    private void setupLocal(DesiredCapabilities desiredCapabilities) {
+
+        try {
+            if (EnvironmentSettings.useLocal()) {
+                Local local = new Local();
+                bslocalDetails.put(Thread.currentThread().getId(), local);
+                Map<String, String> bsLocalOptions = new HashMap<String, String>();
+                log.info("Creating a BrowserStack local connection.");
+                
+                // We need to set a local identifier to enable running concurrent local tests on one system.
+                // Mostly necessary on Jenkins so that different jobs can execute with local concurrently.
+                String localId = EnvironmentSettings.getBrowserstackLocalId();
+                localId=localId.isEmpty()?Utils.getAlphaNumericString(10):localId;
+                if (!localId.equals("")) {
+                    bsLocalOptions.put("localIdentifier", localId);
+                    desiredCapabilities.setCapability("browserstack.localIdentifier", localId);
+                    log.debug("Setting local identifier for startup to: " + localId);
+                }
+                bsLocalOptions.put("key", EnvironmentSettings.getBrowserstackPassword());
+                local.start(bsLocalOptions);
+                log.info("Browserstack local is running: "+local.isRunning());
+                bsLocalOptions.put("force", "true");
+                bsLocalOptions.put("forcelocal", "true");
+                desiredCapabilities.setCapability("browserstack.local", true);
+            }
+        } catch (Exception e) {
+            log.info("Failure on creating local. Message is " + e.getMessage());
+        }
+    }
+
+}
+

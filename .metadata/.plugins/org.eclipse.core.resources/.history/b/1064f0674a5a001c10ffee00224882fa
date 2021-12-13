@@ -1,0 +1,21 @@
+package restassured;
+
+import org.testng.annotations.Test;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+
+public class test_01_get {
+	
+	@Test
+	void test01() {
+		
+		Response res=RestAssured.get("https://avalara-stage.adobemsbasic.com/ava-servlets/servletpage/jcr:content.busineslicenseteaser.json?address=AVAF&city=AVAF&state=AVAF&postalCode=67565666");
+		System.out.println(res.statusCode());
+		System.out.println(res.asString());
+		System.out.println(res.getBody());
+		System.out.println(res.getHeader("content-type"));
+	}
+
+}

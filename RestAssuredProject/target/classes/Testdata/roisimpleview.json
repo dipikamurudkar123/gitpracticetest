@@ -1,0 +1,97 @@
+{
+"Invalid":[
+{
+    "Monitoring nexus threshold": "&^%",
+    "Researching and calculating taxes": "3",
+    "Prepping filing and remitting returns": "0",
+    "Managing exemption certificates": "0",
+    "Total taxable revenue exposure": "0",
+  },
+  {
+    "Monitoring nexus threshold": " ",
+    "Researching and calculating taxes": "3",
+    "Prepping filing and remitting returns": "4",
+    "Managing exemption certificates": "11",
+    "Total taxable revenue exposure": "56",
+  },
+  {
+    "Monitoring nexus threshold": "11",
+    "Researching and calculating taxes": " ",
+    "Prepping filing and remitting returns": "54",
+    "Managing exemption certificates": "21",
+    "Total taxable revenue exposure": "56",
+  },
+  {
+    "Monitoring nexus threshold": "44",
+    "Researching and calculating taxes": "33",
+    "Prepping filing and remitting returns": " ",
+    "Managing exemption certificates": "11",
+    "Total taxable revenue exposure": "56",
+  },
+  {
+    "Monitoring nexus threshold": "75",
+    "Researching and calculating taxes": "34",
+    "Prepping filing and remitting returns": "48",
+    "Managing exemption certificates": " ",
+    "Total taxable revenue exposure": "56",
+  },
+  {
+    "Monitoring nexus threshold": "12",
+    "Researching and calculating taxes": "31",
+    "Prepping filing and remitting returns": "47",
+    "Managing exemption certificates": "11",
+    "Total taxable revenue exposure": " ",
+  },
+  {
+    "Monitoring nexus threshold": "-",
+    "Researching and calculating taxes": "3",
+    "Prepping filing and remitting returns": "0",
+    "Managing exemption certificates": "0",
+    "Total taxable revenue exposure": "0",
+  }
+]
+"valid":[
+  {
+    "Monitoring nexus threshold": "10",
+    "Researching and calculating taxes": "30",
+    "Prepping filing and remitting returns": "35",
+    "Managing exemption certificates": "11",
+    "Total taxable revenue exposure": "1000000",
+  },
+  {
+    "Monitoring nexus threshold": "66",
+    "Researching and calculating taxes": "78",
+    "Prepping filing and remitting returns": "89",
+    "Managing exemption certificates": "0",
+    "Total taxable revenue exposure": "4500000",
+  },
+  {
+    "Monitoring nexus threshold": "14",
+    "Researching and calculating taxes": "58",
+    "Prepping filing and remitting returns": "0",
+    "Managing exemption certificates": "88",
+    "Total taxable revenue exposure": "4500000",
+  },
+  {
+    "Monitoring nexus threshold": "38",
+    "Researching and calculating taxes": "0",
+    "Prepping filing and remitting returns": "42",
+    "Managing exemption certificates": "58",
+    "Total taxable revenue exposure": "45566000",
+  },
+  {
+    "Monitoring nexus threshold": "0",
+    "Researching and calculating taxes": "67",
+    "Prepping filing and remitting returns": "38",
+    "Managing exemption certificates": "99",
+    "Total taxable revenue exposure": "4500000",
+  },
+  {
+    "Monitoring nexus threshold": "60",
+    "Researching and calculating taxes": "40",
+    "Prepping filing and remitting returns": "30",
+    "Managing exemption certificates": "40",
+    "Total taxable revenue exposure": "10000",
+  }
+]
+}

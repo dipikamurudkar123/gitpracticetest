@@ -1,0 +1,17 @@
+package restassured;
+
+import org.testng.annotations.Test;
+
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Response;
+
+public class test_01_get {
+	
+	@Test
+	void test01() {
+		
+		Response res=RestAssured.get("http://localhost:8080/lotto");
+		System.out.println(res);
+	}
+
+}

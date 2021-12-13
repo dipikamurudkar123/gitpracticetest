@@ -1,0 +1,183 @@
+package com.avalara.drivers.capabilities;
+
+import com.avalara.utils.settings.BrowserSettings;
+import com.avalara.utils.settings.EnvironmentSettings;
+import com.avalara.utils.settings.SuiteParameters;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+public class CapabilitiesFactory {
+
+    private static Logger log = null;
+
+    /**
+     * Prevent instantiation.
+     */
+    protected CapabilitiesFactory() {
+
+    }
+
+    public static void initialize() {
+       log = Logger.getLogger("CapabilitiesFactory");
+        log.info("------->>> Initializing CapabilitiesFactory in static class member function <<<<-----");
+    }
+
+    /**
+     * Reads the properties files to determine the browser, device, and OS-specific
+     * capabilities to set for Selenium.
+     *
+     * @return A nearly complete DesiredCapabilities instance.
+     */
+    public static DesiredCapabilities getCapablities() {
+        if (null == log) {
+            initialize();
+        }
+
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+
+        setCommonCapabilities(desiredCapabilities);
+
+        if (BrowserSettings.getBrowserIsDevice().toLowerCase().equals("true")) {
+            setDeviceCapabilities(desiredCapabilities);
+        } else {
+            setBrowserCapabilities(desiredCapabilities);
+        }
+
+        return desiredCapabilities;
+    }
+
+    /**
+     * Set capabilities specific to desktop browsers.
+     *
+     * @param desiredCapabilities The capability instance to populate.
+     */
+    private static void setBrowserCapabilities(DesiredCapabilities desiredCapabilities) {
+        log.info("Setting os name to: " + BrowserSettings.getBrowserOsName());
+        desiredCapabilities.setCapability("os", BrowserSettings.getBrowserOsName());
+
+        log.info("Setting browser name to: " + BrowserSettings.getBrowserName());
+        desiredCapabilities.setCapability("browser", BrowserSettings.getBrowserName());
+
+        log.info("Setting browser version to: " + BrowserSettings.getBrowserVersion());
+        desiredCapabilities.setCapability("browser_version", BrowserSettings.getBrowserVersion());
+        desiredCapabilities.setCapability(InternetExplorerDriver.IGNORE_ZOOM_SETTING, true);
+        //Enable the popup
+        desiredCapabilities.setCapability("browserstack.ie.enablePopups", true);
+        desiredCapabilities.setCapability("browserstack.edge.enablePopups", true);
+        desiredCapabilities.setCapability("browserstack.safari.enablePopups", true);
+        if (BrowserSettings.getBrowserName().equalsIgnoreCase("Edge")) {
+        	desiredCapabilities.setCapability("browserstack.use_w3c", true);
+        }
+
+        String res = BrowserSettings.getBrowserScreenSize();
+        if (!res.equals("")) {
+            log.info("Setting window resolution to: " + res);
+            desiredCapabilities.setCapability("resolution", res);
+        }
+
+        if (BrowserSettings.getBrowserName().equalsIgnoreCase("Firefox")) {
+            FirefoxProfile firefoxProfile = new FirefoxProfile();
+            firefoxProfile.setPreference("browser.downLoad.folderList", 0);
+            firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "Applications/zip");
+            firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/zip, application/x-winzip,application/x-zip");
+            firefoxProfile.setPreference("browser.download.panel.shown", false);
+            desiredCapabilities.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
+            desiredCapabilities.setCapability("browserstack.firefox.enablePopups", true);
+
+        }
+
+        if (BrowserSettings.getBrowserName().equalsIgnoreCase("Chrome")) {
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--disable-popup-blocking");
+            Map<String, Object> prefs = new HashMap<>();
+            Map<String, Object> profile = new HashMap<>();
+            Map<String, Object> contentSettings = new HashMap<>();
+            profile.put("managed_default_content_settings", contentSettings);
+            prefs.put("profile", profile);
+            options.setExperimentalOption("prefs", prefs);
+            contentSettings.put("geolocation", 1);
+            profile.put("managed_default_content_settings", contentSettings);
+            prefs.put("profile", profile);
+            options.setExperimentalOption("prefs", prefs);
+            desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, options);
+        }
+    }
+
+    /**
+     * Set capabilties specific to devices.
+     *
+     * @param desiredCapabilities The capability instance to populate.
+     */
+    private static void setDeviceCapabilities(DesiredCapabilities desiredCapabilities) {
+        log.info("Setting device to: " + BrowserSettings.getBrowserDeviceName());
+        desiredCapabilities.setCapability("device", BrowserSettings.getBrowserDeviceName());
+        
+        log.info("Setting real device status to: " + BrowserSettings.getBrowserIsRealDevice());
+        desiredCapabilities.setCapability("real_mobile", BrowserSettings.getBrowserIsRealDevice());
+        
+        desiredCapabilities.setCapability("autoAcceptAlerts", true);
+        desiredCapabilities.setCapability("safariAllowPopups", true);
+        desiredCapabilities.setCapability("nativeWebTap", true);
+        desiredCapabilities.setCapability("acceptSslCert", true);
+        
+        
+        if (BrowserSettings.getBrowserDeviceOrientation().toLowerCase().equals("landscape")) {
+            log.info("Setting device orientation to landscape.");
+            desiredCapabilities.setCapability("deviceOrientation", "landscape");
+        }
+    }
+
+    /**
+     * Set capabilities shared by both browser types.
+     *
+     * @param desiredCapabilities The capability instance to populate.
+     */
+    private static void setCommonCapabilities(DesiredCapabilities desiredCapabilities) {
+        log.info("Setting os version to: " + BrowserSettings.getBrowserOsVersion());
+        desiredCapabilities.setCapability("os_version", BrowserSettings.getBrowserOsVersion());
+
+        // Add debug if necessary.
+        if (EnvironmentSettings.isDebug()) {
+            log.info("Enabling BrowserStack debug mode.");
+            desiredCapabilities.setCapability("browserstack.debug", "true");
+        }
+
+        String countryCode = EnvironmentSettings.getGeoCode();
+        if (!countryCode.equals("")) {
+            log.info("Setting country code to: " + countryCode);
+            desiredCapabilities.setCapability("browserstack.geoLocation", countryCode);
+        }
+
+        String SpeedValues = EnvironmentSettings.getCustomeNetwork();
+        if (!SpeedValues.equals("false")) {
+            desiredCapabilities.setCapability("browserstack.customNetwork", SpeedValues);
+        }
+        log.info("Setting build name to: " + EnvironmentSettings.getBuildName());
+        desiredCapabilities.setCapability("build", EnvironmentSettings.getBuildName());
+        String seleniumVersion = BrowserSettings.getBrowserStackSeleniumVersion();
+        if (!seleniumVersion.equals("")) {
+            log.info("Setting selenium version to: " + seleniumVersion);
+            desiredCapabilities.setCapability("browserstack.selenium_version", seleniumVersion);
+        }
+
+        /**
+         * Setting Network capabilities
+         */
+        if (EnvironmentSettings.getNetworkLogSetting()) {
+            desiredCapabilities.setCapability("browserstack.networkLogs", "true");
+        }
+
+        if (SuiteParameters.isConsoleLogsEnable()) {
+
+            desiredCapabilities.setCapability("browserstack.console", "errors");
+        }
+    }
+
+}

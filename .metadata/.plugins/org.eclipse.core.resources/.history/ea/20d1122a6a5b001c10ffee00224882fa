@@ -1,0 +1,32 @@
+package com.avalara.drivers;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+
+import static com.avalara.drivers.DriverClass.webDriverDetails;
+
+public class DriverFactory {
+
+    public static Logger log = Logger.getLogger("DriverFactory");
+    
+    public  DriverClass createInstance() {
+        DriverClass driver = new DriverClass();
+        try {
+            driver.intialize();
+        } catch (Exception e) {
+            log.info("Class DriverFactory | Method createInstance | Exception desc : " + e.getMessage());
+        }
+        return driver;
+    }
+
+    public  void tearDown() {
+        try {
+            String temp=String.valueOf(Thread.currentThread().getId());
+            WebDriver driver  =webDriverDetails.get(temp).getKey();
+            driver.quit();
+        } catch (Exception e) {
+            log.info("Quitted driver" + e.getMessage());
+        }
+    }
+
+}

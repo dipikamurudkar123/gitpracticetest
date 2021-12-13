@@ -1,0 +1,22 @@
+package restassured;
+
+import org.testng.annotations.Test;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
+
+public class test_01_get {
+	
+	@Test
+	void test01() {
+		
+		Response res=RestAssured.get("https://reqres.in/api/users?page=2");
+		//Response res=RestAssured.get("https://rest.avatax.com/api/v2/transactions/create");
+		System.out.println(res.statusCode());
+		System.out.println(res.asString());
+		System.out.println(res.getBody());
+		System.out.println(res.getHeader("content-type"));
+	}
+
+}

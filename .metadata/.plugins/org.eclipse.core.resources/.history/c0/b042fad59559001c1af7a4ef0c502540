@@ -1,0 +1,77 @@
+import java.util.Arrays;
+
+public class array1d {
+
+	public static void main(String[] args) {
+		int[] ab = {8,7,1,1,3,3,4,44};
+		
+		printarray(ab, 2);
+		addition(ab);
+		largest(ab);
+		smallest(ab);
+		findoccurance(ab,4);
+		sortArray(ab);
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void addition(int[] ab) {
+		int sum = 0;
+		for (int i = 0; i < ab.length; i++) {
+			sum = sum + ab[i];
+		}
+		System.out.println("Sum of integer values = " + sum);
+	}
+
+	public static void printarray(int[] ab, int noofelement) {
+
+		System.out.println(ab[noofelement]);
+	}
+	
+	public static void largest(int[] ab) {
+
+		int max=ab[0];
+		for(int i=0;i<ab.length;i++) {
+			if(ab[i]>max) {
+				max=ab[i];
+			}
+		}
+		System.out.println("largest number in array is "+max);
+	}
+	
+	public static void smallest(int[] ab) {
+   
+		int min=ab[0];
+		for(int i=0;i<ab.length;i++) {
+			if(min>ab[i]) {
+				min=ab[i];
+			}
+		}
+		System.out.println("smallest no is= "+ min);
+	}
+	
+	public static void findoccurance(int[] ab,int n) {
+		   int count=0; 
+		for(int a: ab) {
+			if(a==n) {
+				count++;
+			}
+		}
+		System.out.println("Count of element "+n+" is = "+count);
+	}
+	
+	public static void sortArray(int[] ab) {
+		   Arrays.sort(ab);
+		   System.out.println(Arrays.toString(ab));
+	}
+	
+}

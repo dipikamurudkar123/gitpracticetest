@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results total="2" passed="1" failed="0" skipped="1">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2021-12-13T06:49:39Z" name="Default suite" finished-at="2021-12-13T06:49:39Z" duration-ms="53">
+    <groups>
+    </groups>
+    <test started-at="2021-12-13T06:49:39Z" name="Default test" finished-at="2021-12-13T06:49:39Z" duration-ms="53">
+      <class name="PageTest.Test1">
+        <test-method is-config="true" signature="sett()[pri:0, instance:PageTest.Test1@4550bb58]" started-at="2021-12-13T12:19:39Z" name="sett" finished-at="2021-12-13T12:19:39Z" duration-ms="12" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- sett -->
+        <test-method signature="dataread()[pri:0, instance:PageTest.Test1@4550bb58]" started-at="2021-12-13T12:19:39Z" name="dataread" finished-at="2021-12-13T12:19:39Z" duration-ms="24" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- dataread -->
+        <test-method signature="dataread2(java.lang.Object)[pri:0, instance:PageTest.Test1@4550bb58]" started-at="2021-12-13T12:19:39Z" name="dataread2" data-provider="roiValidInputsValues" finished-at="2021-12-13T12:19:39Z" duration-ms="0" status="SKIP">
+          <exception class="org.testng.TestNGException">
+            <message>
+              <![CDATA[
+Data Provider public java.lang.Object[] PageTest.Test1.readValidValues() throws java.lang.Exception must return either Object[][] or Iterator<Object>[], not class [Ljava.lang.Object;]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[org.testng.TestNGException: 
+Data Provider public java.lang.Object[] PageTest.Test1.readValidValues() throws java.lang.Exception must return either Object[][] or Iterator<Object>[], not class [Ljava.lang.Object;
+	at org.testng.internal.MethodInvocationHelper.invokeDataProvider(MethodInvocationHelper.java:157)
+	at org.testng.internal.Parameters.handleParameters(Parameters.java:430)
+	at org.testng.internal.Invoker.handleParameters(Invoker.java:1276)
+	at org.testng.internal.Invoker.createParameters(Invoker.java:991)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1081)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:129)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:112)
+	at org.testng.TestRunner.privateRun(TestRunner.java:782)
+	at org.testng.TestRunner.run(TestRunner.java:632)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:366)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:361)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:268)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1244)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1169)
+	at org.testng.TestNG.run(TestNG.java:1064)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:113)
+	at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:206)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:177)
+]]>
+            </full-stacktrace>
+          </exception> <!-- org.testng.TestNGException -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- dataread2 -->
+      </class> <!-- PageTest.Test1 -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
